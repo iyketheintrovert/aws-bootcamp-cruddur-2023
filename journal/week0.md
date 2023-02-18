@@ -39,4 +39,4 @@ Using the alarm-config file, I created an alarm on cloudwatch using:
 
 
 ## Logical Diagram
-![Diagram of Logical Diagram](~/_docs/assets/logical-diagram.png)
+![Diagram of Logical Diagram](../_docs/assets/logical-diagram.png)
