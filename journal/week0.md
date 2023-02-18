@@ -39,4 +39,4 @@ Using the alarm-config file, I created an alarm on cloudwatch using:
 
 
 ## Logical Diagram
-![Diagram of Logical Diagram](logical-diagram.png)
+![Diagram of Logical Diagram](/workspace/aws-bootcamp-cruddur-2023/logical-diagram.png)
