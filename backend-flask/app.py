@@ -20,8 +20,8 @@ from services.show_activity import *
 from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError
 
 #X-RAY
-#from aws_xray_sdk.core import xray_recorder
-#from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
 #Honeycomb
 from opentelemetry import trace
@@ -56,17 +56,19 @@ from flask import got_request_exception
 provider = TracerProvider()
 processor = BatchSpanProcessor(OTLPSpanExporter())
 provider.add_span_processor(processor)
+
+
+
+#X-RAY
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+
+
 trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
 
-#X-RAY
-#xray_url = os.getenv("AWS_XRAY_URL")
-#xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
-
 #Honeycomb
 app = Flask(__name__)
-
-#XRayMiddleware(app, xray_recorder)
 
 cognito_jwt_token = CognitoJwtToken (
   user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"),
@@ -76,6 +78,8 @@ cognito_jwt_token = CognitoJwtToken (
 
 FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
+
+XRayMiddleware(app, xray_recorder)
 
 frontend = os.getenv('FRONTEND_URL')
 backend = os.getenv('BACKEND_URL')
@@ -88,6 +92,7 @@ cors = CORS(
   methods="OPTIONS,GET,HEAD,POST"
 )
 
+#CloudWatch Logs
 #@app.after_request
 #def after_request(response):
 #    timestamp = strftime('[%Y-%b-%d %H:%M]')
