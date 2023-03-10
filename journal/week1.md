@@ -10,6 +10,7 @@ I created a Docker File for both the Frontend and the Backend folders, and used
 export FRONTEND_URL=""
 export BACKEND_URL=""
 ```
+```docker run --rm -p 4567:4567 -it -e FRONTEND_URL="*" -e BACKEND_URL="*" backend-flask```
 
 ## Create Docker Compose File
 
@@ -22,38 +23,13 @@ The frontend was not served because node modules were not installed so i did the
 ```docker compose up```
 
 
+## Update Notifications
+
+Added code for installing clients for Dynamo DB and Postgres in my Docker File
+Also install postgres when our Gitpod enviroment lanuches.
+
+
 ## Add Dynamo DB and Postgres
 
 Added code for installing clients for Dynamo DB and Postgres in my Docker File
-- We are going to install the AWS CLI when our Gitpod enviroment lanuches.
-- We are are going to set AWS CLI to use partial autoprompt mode to make it easier to debug CLI commands.
-- The bash commands we are using are the same as the [AWS CLI Install Instructions]https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-
-
-Update our `.gitpod.yml` to include the following task.
-
-```sh
-tasks:
-  - name: aws-cli
-    env:
-      AWS_CLI_AUTO_PROMPT: on-partial
-    init: |
-      cd /workspace
-      curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-      unzip awscliv2.zip
-      sudo ./aws/install
-      cd $THEIA_WORKSPACE_ROOT
-```
-
-We'll also run these commands indivually to perform the install manually
-
-### Create a new User and Generate AWS Credentials
-
-- Go to (IAM Users Console](https://us-east-1.console.aws.amazon.com/iamv2/home?region=us-east-1#/users) andrew create a new user
-- `Enable console access` for the user
-- Create a new `Admin` Group and apply `AdministratorAccess`
-- Create the user and go find and click into the user
-- Click on `Security Credentials` and `Create Access Key`
-- Choose AWS CLI Access
-- Download the CSV with the credentials
-
+Also install postgres when our Gitpod enviroment lanuches.
