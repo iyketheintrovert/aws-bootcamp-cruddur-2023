@@ -22,12 +22,9 @@ The frontend was not served because node modules were not installed so i did the
 ```docker compose up```
 
 
-```docker build``` to create docker images for both of them and then ```docker run``` to serve both.
+## Add Dynamo DB and Postgres
 
-
-
-### Install AWS CLI
-
+Added code for installing clients for Dynamo DB and Postgres in my Docker File
 - We are going to install the AWS CLI when our Gitpod enviroment lanuches.
 - We are are going to set AWS CLI to use partial autoprompt mode to make it easier to debug CLI commands.
 - The bash commands we are using are the same as the [AWS CLI Install Instructions]https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
