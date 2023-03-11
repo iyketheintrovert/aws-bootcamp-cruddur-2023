@@ -23,10 +23,9 @@ The frontend was not served because node modules were not installed so i did the
 ```docker compose up```
 
 
-## Update Notifications
+## Create & Update Notifications
 
-Added code for installing clients for Dynamo DB and Postgres in my Docker File
-Also install postgres when our Gitpod enviroment lanuches.
+Create and Update the Notification feature on the backend and frontend using openApi and hit the endpoint to ensure that it's connected.
 
 
 ## Add Dynamo DB and Postgres
