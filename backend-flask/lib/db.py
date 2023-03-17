@@ -1,39 +1,59 @@
 from psycopg_pool import ConnectionPool
 import os
+import re
+import sys
+from flask import current_app as app
 
 class Db:
   def __init__(self):
     self.init_pool()
   
+  def template(self, *args):
+    pathing = list((app.root_path, 'db', 'sql')+args)
+    pathing[-1] = pathing[-1]+".sql"
+    print("pathing:")
+    print(pathing)
+
+    template_path = os.path.join(app.root_path, 'db', 'sql',name+'.sql')
+    with open('template_path', 'r') as f:
+      template_content = f.read()
+    return template_content
+  
   def init_pool(self):
     connection_url = os.getenv("CONNECTION_URL")
     self.pool = ConnectionPool(connection_url)
 
-  def query_commit(self):
+  def query_commit(self, sql, params={}):
+    pattern  = r"\bRETURNING\b"
+    is_returning_id = re.search(pattern, sql)
+    
     try:
-      conn = self.pool.connection()
-      cur = conn.cursor()
-      cur.execute(sql)
-      conn.commit()
+      with self.pool.connection() as conn:
+        cur = conn.cursor()
+        cur.execute(sql, params)
+        if is_returning_id:
+          returning_id = cur.fetchone()[0]
+        conn.commit()
+        if is_returning_id:
+          return returning_id
     except Exception as err:
       self.print_sql_err(err)
-      #conn.rollback()
 
-  def query_array_json(self, sql):
+  def query_array_json(self, sql, params={}):
     wrapped_sql = self.query_wrap_array(sql)
     with self.pool.connection() as conn:
       with conn.cursor() as cur:
-        cur.execute(wrapped_sql)
+        cur.execute(wrapped_sql, params)
         # this will return a tuple
         # the first field being the data
         json = cur.fetchone()
         return json[0]
   
-  def query_object_json(self, sql):
+  def query_object_json(self, sql, params={}):
     wrapped_sql = self.query_wrap_object(sql)
     with self.pool.connection() as conn:
       with conn.cursor() as cur:
-        cur.execute(wrapped_sql)
+        cur.execute(wrapped_sql, params)
         # this will return a tuple
         # the first field being the data
         json = cur.fetchone()
@@ -64,7 +84,7 @@ class Db:
     print("\npsycopg ERROR", err, "on line number:", line_num)
     print("psycopg traceback:", traceback, "-- type:", err_type)
 
-    print("\nextensions.Diagnostics:", err.diag)
+    #print("\nextensions.Diagnostics:", err.diag)
     
     print("pgerror:", err.pgerror)
     print("pgcode:", err.pgcode, "\n")
