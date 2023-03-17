@@ -15,7 +15,7 @@ class HomeActivities:
       #now = datetime.now(timezone.utc).astimezone()
       #span.set_attribute('app.now', now.isoformat())
       
-    sql = query_wrap_array("""
+    results = db.query_wrap_array_json("""
     SELECT
       activities.uuid,
       users.display_name,
@@ -32,5 +32,5 @@ class HomeActivities:
     ORDER BY activities.created_at DESC
     """)
     
-    return json[0]
+    #return json[0]
     return results
