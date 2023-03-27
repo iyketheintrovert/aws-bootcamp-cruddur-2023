@@ -34,11 +34,11 @@ class Db:
     for key, value in params.items():
       print(key, ":", value)
 
-  def print_sql(self,title,sql):
+  def print_sql(self,title,sql,params={}):
     cyan = '\033[96m'
     no_color = '\033[0m'
     print(f'{cyan} SQL STATEMENT-[{title}]------{no_color}')
-    print(sql)
+    print(sql,params)
 
   def query_commit(self, sql, params={}):
     self.print_sql('commit with returning',sql)
@@ -58,8 +58,16 @@ class Db:
     except Exception as err:
       self.print_sql_err(err)
 
+  def query_value(self, sql, params={}):
+    self.print_sql('value', sql, params)
+    with self.pool.connection() as conn:
+      with conn.cursor() as cur:
+        cur.execute(sql, params)
+        json = cur.fetchone()
+        return json[0]
+
   def query_array_json(self, sql, params={}):
-    self.print_sql('array',sql)
+    self.print_sql('array',sql,params)
 
     wrapped_sql = self.query_wrap_array(sql)
     with self.pool.connection() as conn:
